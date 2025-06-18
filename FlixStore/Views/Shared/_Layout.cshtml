@@ -1,46 +1,206 @@
-﻿<!DOCTYPE html>
+﻿@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - FlixStore</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FlixStore.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex-grow: 1;
+            padding-bottom: 1rem;
+            margin-top: 1rem;
+        }
+
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #198754 !important;
+        }
+
+        /* Modernisation navbar: liens sans cadre ni fond */
+        .navbar-nav .nav-link {
+            border: none !important;
+            background: transparent !important;
+            padding: 0.25rem 0.5rem;
+            color: #212529; /* texte sombre */
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+
+            .navbar-nav .nav-link i {
+                margin-right: 0.3rem;
+                font-size: 1.2rem; /* un peu plus gros */
+                transition: color 0.3s ease;
+            }
+
+        /* Effet bleu au hover sur Movies */
+        .movies-link {
+            color: #212529;
+            transition: color 0.3s ease;
+        }
+
+            .movies-link:hover,
+            .movies-link:focus {
+                color: #0d6efd; /* bleu Bootstrap */
+                text-decoration: none;
+            }
+
+        /* Management icon couleur au hover */
+        .nav-item.dropdown > .nav-link:hover i,
+        .nav-item.dropdown > .nav-link:focus i {
+            color: #198754; /* vert bootstrap */
+        }
+
+        /* Dropdown links styling */
+        .dropdown-menu a.dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: #212529;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+            .dropdown-menu a.dropdown-item i {
+                font-size: 1.2rem; /* plus gros */
+                transition: color 0.3s ease;
+            }
+
+            .dropdown-menu a.dropdown-item:hover,
+            .dropdown-menu a.dropdown-item:focus {
+                background-color: #e9f5ec;
+                color: #198754;
+                text-decoration: none;
+            }
+
+                .dropdown-menu a.dropdown-item:hover i,
+                .dropdown-menu a.dropdown-item:focus i {
+                    color: #198754;
+                }
+
+        /* Bouton toggler minimaliste */
+        .navbar-toggler {
+            border: none;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(30%) sepia(60%) saturate(300%) hue-rotate(90deg);
+            /* un petit style plus doux */
+        }
+
+        /* Formulaire recherche simplifié et sans cadre */
+        form.d-flex input.form-control {
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+            padding-left: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+            form.d-flex input.form-control:focus {
+                border-color: #198754;
+                box-shadow: none;
+            }
+
+        form.d-flex button.btn-outline-success {
+            border: none;
+            background: transparent;
+            color: #198754;
+            font-size: 1.2rem;
+        }
+
+            form.d-flex button.btn-outline-success:hover {
+                background: transparent;
+                color: #145c32;
+            }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FlixStore</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-controller="Movies" asp-action="Index">
+                    <i class="bi bi-play-circle-fill me-1"></i> FlixStore
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link movies-link" asp-controller="Movies" asp-action="Index">
+                                <i class="bi bi-film"></i> Movies
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear"></i> Management
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li><a class="dropdown-item" asp-controller="Cinemas" asp-action="Index"><i class="bi bi-camera-video"></i> Cinemas</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Producers" asp-action="Index"><i class="bi bi-mic"></i> Producers</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Actors" asp-action="Index"><i class="bi bi-person-badge"></i> Actors</a></li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
+
+                    <form class="d-flex me-3" asp-controller="Movies" asp-action="Filter" role="search">
+                        <input name="searchString" class="form-control me-2" type="search" placeholder="Search for a movie..." aria-label="Search movies" />
+                        <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+                    </form>
+
+                    <ul class="navbar-nav me-3">
+                        @await Component.InvokeAsync("ShoppingCartSummary")
+                    </ul>
+
+                    <partial name="_Identity.cshtml" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FlixStore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    <main role="main" class="container-fluid pb-3">
+        @RenderBody()
+    </main>
+
+    <footer>
+        &copy; 2025 - FlixStore
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

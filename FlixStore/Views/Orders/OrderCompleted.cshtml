@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .confirmation-card {
+        border-radius: 0.75rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        background-color: #f8f9fa;
+    }
+
+    .confirmation-icon {
+        font-size: 3rem;
+        color: #28a745;
+    }
+
+    .btn-back {
+        margin-top: 1.5rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center confirmation-card">
+                <div class="confirmation-icon mb-3">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <h2 class="fw-semibold text-success mb-3">Order completed successfully</h2>
+                <p class="text-muted">
+                    You can check all your orders in the <strong>Orders</strong> section of your profile.
+                </p>
+                <p class="text-dark-emphasis">Thank you for your purchase!</p>
+
+                <a href="/" class="btn btn-outline-success btn-back">
+                    <i class="bi bi-house-door me-1"></i> Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,210 @@
+﻿@model List<Order>
+
+@{
+    ViewData["Title"] = "All orders";
+
+    // Regroupe les commandes par date (jour) et les trie de la plus récente à la plus ancienne
+    var groupedOrders = Model
+        .OrderByDescending(o => o.OrderDate)
+        .GroupBy(o => o.OrderDate.Date)
+        .ToList();
+}
+
+@functions {
+    string FormatDateLabel(DateTime date)
+    {
+        var today = DateTime.Today;
+        var yesterday = today.AddDays(-1);
+
+        if (date.Date == today)
+            return "Aujourd'hui";
+        else if (date.Date == yesterday)
+            return "Hier";
+        else
+            return date.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"));
+    }
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .card {
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: none;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        background-color: #fff;
+    }
+
+    .order-header {
+        font-weight: 600;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+        .order-header > div {
+            flex-grow: 1;
+        }
+
+    .order-id {
+        flex-grow: 2;
+    }
+
+    .order-total {
+        color: #198754;
+        font-weight: 700;
+        font-size: 1.15rem;
+        text-align: right;
+        min-width: 110px;
+    }
+
+    .order-user {
+        text-align: right;
+        color: #555;
+        font-weight: 500;
+        min-width: 150px;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .order-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .order-item {
+        display: flex;
+        align-items: center;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        gap: 1rem;
+    }
+
+        .order-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 0.4rem;
+            object-fit: cover;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+    .badge-amount {
+        min-width: 2.5rem;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        background-color: #198754;
+        color: white;
+        border-radius: 0.5rem;
+        padding: 0.25rem 0;
+    }
+
+    .movie-name {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #222;
+    }
+
+    .price, .subtotal {
+        font-weight: 600;
+        color: #198754;
+        min-width: 80px;
+        text-align: right;
+    }
+
+    .text-muted-small {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    .date-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #555;
+        text-align: right;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .daily-total {
+        color: #198754;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h3 class="mb-2 text-center fw-semibold">List of all your orders</h3>
+            <p class="text-center text-muted mb-4">
+                Below is a summary of all the orders you have placed so far. Newest orders appear first.
+            </p>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle fs-3"></i><br />
+                    You have no orders yet.
+                </div>
+            }
+            else
+            {
+                foreach (var group in groupedOrders)
+                {
+                    var dailyTotal = group.Sum(o => o.OrderItems.Sum(i => i.Amount * i.Price));
+
+                    <div class="date-label">
+                        @FormatDateLabel(group.Key)
+                        <span class="daily-total">  Total : @dailyTotal.ToString("c", new System.Globalization.CultureInfo("fr-FR"))</span>
+                    </div>
+
+                    foreach (var order in group.OrderByDescending(o => o.Id))
+                    {
+                        <div class="card">
+                            <div class="order-header">
+                                <div class="order-id">Orders: @order.Id</div>
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                {
+                                    <div class="order-user"> @order.User.FullName </div>
+                                }
+                                <div class="order-total">@order.OrderItems.Sum(i => i.Amount * i.Price).ToString("c", new System.Globalization.CultureInfo("fr-FR"))</div>
+                            </div>
+
+                            <div class="order-items">
+                                @foreach (var item in order.OrderItems)
+                                {
+                                    <div class="order-item">
+                                        <span class="badge-amount">@item.Amount</span>
+                                        <img src="@item.Movie.ImageURL" alt="@item.Movie.Name" />
+                                        <div class="flex-grow-1">
+                                            <div class="movie-name">@item.Movie.Name</div>
+                                            <small class="text-muted-small">@item.Price.ToString("c", new System.Globalization.CultureInfo("fr-FR"))</small>
+                                        </div>
+                                        <div class="subtotal">@((item.Amount * item.Price).ToString("c", new System.Globalization.CultureInfo("fr-FR")))</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+</div>

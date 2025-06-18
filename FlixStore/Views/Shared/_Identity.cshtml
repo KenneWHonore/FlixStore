@@ -1,0 +1,127 @@
+﻿@using FlixStore.Models
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ApplicationUser currentUser = null;
+    if (User.Identity.IsAuthenticated)
+    {
+        currentUser = UserManager.GetUserAsync(User).GetAwaiter().GetResult();
+    }
+}
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="auth-buttons d-flex align-items-center gap-3">
+        <a class="btn btn-modern btn-outline-success" asp-controller="Account" asp-action="Login">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Log in
+        </a>
+        <a class="btn btn-modern btn-outline-primary" asp-controller="Account" asp-action="Register">
+            <i class="bi bi-person-plus me-1"></i> Register
+        </a>
+    </div>
+}
+else
+{
+    <div class="auth-buttons d-flex align-items-center gap-3">
+        <div class="dropdown">
+            <button class="btn btn-modern btn-outline-success dropdown-toggle d-flex align-items-center" type="button" id="profile-btn"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle me-2 icon-user"></i> Hello @(currentUser?.FullName ?? currentUser?.UserName)
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile-btn">
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" asp-controller="Orders" asp-action="Index">
+                        <i class="bi bi-list me-2"></i> Orders
+                    </a>
+                </li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="Users">
+                            <i class="bi bi-people me-2"></i> Users
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <form asp-controller="Account" asp-action="Logout" class="m-0">
+            <button class="btn btn-modern btn-outline-danger d-flex align-items-center" type="submit">
+                <i class="bi bi-box-arrow-right me-1"></i> Log out
+            </button>
+        </form>
+    </div>
+}
+
+<style>
+    .auth-buttons {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-modern {
+        padding: 0.45rem 1rem;
+        font-weight: 600;
+        border-width: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        transition: color 0.25s ease, background-color 0.25s ease;
+    }
+
+    .btn-outline-success.btn-modern {
+        color: #198754;
+    }
+
+        .btn-outline-success.btn-modern:hover,
+        .btn-outline-success.btn-modern:focus {
+            color: #fff;
+            background-color: #198754 !important;
+            text-decoration: none;
+        }
+
+            .btn-outline-success.btn-modern:hover .icon-user {
+                color: #198754 !important;
+            }
+
+    .btn-outline-primary.btn-modern {
+        color: #0d6efd;
+    }
+
+        .btn-outline-primary.btn-modern:hover,
+        .btn-outline-primary.btn-modern:focus {
+            color: #fff;
+            background-color: #0d6efd !important;
+            text-decoration: none;
+        }
+
+    .btn-outline-danger.btn-modern {
+        color: #dc3545;
+    }
+
+        .btn-outline-danger.btn-modern:hover,
+        .btn-outline-danger.btn-modern:focus {
+            color: #fff;
+            background-color: #dc3545 !important;
+            text-decoration: none;
+        }
+
+    .dropdown-menu {
+        min-width: 12rem;
+        border-radius: 0.375rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .dropdown-item {
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+        color: #212529;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .dropdown-item:hover,
+        .dropdown-item:focus {
+            background-color: #e6f4ea;
+            color: #198754;
+            text-decoration: none;
+        }
+</style>

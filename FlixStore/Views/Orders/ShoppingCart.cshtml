@@ -1,0 +1,170 @@
+﻿@using FlixStore.Data.ViewModels
+@using System.Globalization
+@model ShoppingCartVM
+
+@{
+    ViewData["Title"] = "Shopping cart summary";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+    }
+
+    .icon-btn {
+        background: none;
+        border: none;
+        padding: 0.25rem;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: transform 0.2s ease;
+    }
+
+        .icon-btn:hover {
+            transform: scale(1.2);
+        }
+
+    .card {
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: none;
+    }
+
+    .btn {
+        min-width: 160px;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card p-4">
+                <div class="text-center mb-3">
+                    <h3 class="fw-semibold text-dark-emphasis">Your Shopping Cart</h3>
+                    <p class="text-muted small">Review the items you’ve selected and confirm your purchase.</p>
+                </div>
+
+                @if (!Model.shoppingCart.ShoppingCartItems.Any())
+                {
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-cart-x fs-3"></i><br />
+                        Your shopping cart is empty.
+                    </div>
+                }
+                else
+                {
+                    <table class="table table-borderless align-middle">
+                        <thead>
+                            <tr class="text-muted small">
+                                <th>Amount</th>
+                                <th>Movie</th>
+                                <th>Price</th>
+                                <th>Subtotal</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.shoppingCart.ShoppingCartItems)
+                            {
+                                <tr>
+                                    <td>@item.Amount</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="@item.Movie.ImageURL" alt="@item.Movie.Name" width="50" height="50" class="rounded shadow-sm me-2" style="object-fit: cover;" />
+                                            <span>@item.Movie.Name</span>
+                                        </div>
+                                    </td>
+                                    <td>@string.Format(new CultureInfo("fr-FR"), "{0:C}", item.Movie.Price)</td>
+                                    <td>@string.Format(new CultureInfo("fr-FR"), "{0:C}", item.Amount * item.Movie.Price)</td>
+                                    <td class="text-center">
+                                        <a asp-controller="Orders" asp-action="RemoveItemFromShoppingCart" asp-route-id="@item.Movie.Id" class="icon-btn text-danger" title="Remove one">
+                                            <i class="bi bi-cart-dash-fill"></i>
+                                        </a>
+                                        <a asp-controller="Orders" asp-action="AddItemToShoppingCart" asp-route-id="@item.Movie.Id" class="icon-btn text-success" title="Add one">
+                                            <i class="bi bi-cart-plus-fill"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr class="fw-semibold">
+                                <td colspan="3" class="text-end">Total:</td>
+                                <td>@string.Format(new CultureInfo("fr-FR"), "{0:C}", Model.ShoppingCarTotal)</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a class="btn btn-outline-primary" asp-controller="Movies" asp-action="Index">
+                            <i class="bi bi-plus-circle me-1"></i> Add More Items
+                        </a>
+                        @* <a class="btn btn-outline-success" asp-action="CompleteOrder">
+                            <i class="bi bi-bag-check-fill me-1"></i> Complete Order
+                        </a> *@
+                        <div id="paypal-btn">
+
+                        </div>
+
+
+                        
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+
+    <script>
+         let _total = @Html.Raw(Model.ShoppingCarTotal);
+
+        paypal.Button.render({
+            //Configure environment
+            env: 'sandbox',
+            client: {
+                sandbox: 'AcKRtgL4i68EZ2ZYuYUx3ilihAg2YhL5dtF_m19A8MjBWVOn6ewNS4M_uV8gA3xi98zTcUq38gUHbVFx'
+            },
+
+            //Customize button
+            locale: 'fr_FR',
+            style: {
+                size: 'small',
+                color: 'gold',
+                shape: 'pill'
+            },
+            commit: true,
+
+            //Set up a payment
+            payment: function (data, actions) {
+                return actions.payment.create({
+                    transactions: [{
+                        amount: {
+                            total: _total,
+                            currency: 'EUR'
+                        }
+                    }]
+                });
+            },
+
+            //Execute the payment
+                onAuthorize: function (data, actions) {
+                return actions.payment.execute().then(function () {
+                    var url = '@Url.Action("CompleteOrder", "Orders", new { })';
+                    window.location.href = url;
+                });
+            }
+        }, '#paypal-btn')
+    </script>
+}

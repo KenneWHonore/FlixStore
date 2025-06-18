@@ -1,0 +1,174 @@
+﻿@model Movie
+
+@{
+    ViewData["Title"] = "Movie details";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .text-dark-emphasis {
+        color: #222;
+    }
+
+    .card {
+        border-radius: 0.3rem;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 10px rgb(0 0 0 / 0.05);
+    }
+
+    .card-header {
+        background-color: #000; /* MODIF ici : fond noir */
+        color: #fff; /* texte blanc */
+        font-weight: 600;
+        font-size: 1.6rem;
+        padding: 1rem 1.5rem;
+        border-radius: 0.3rem 0.3rem 0 0;
+    }
+
+    /* Ici on enlève l'object-fit cover pour afficher l'image entière */
+    .card-img-full {
+        width: 100%;
+        height: auto;
+        border-top-left-radius: 0.3rem;
+        border-bottom-left-radius: 0.3rem;
+        object-fit: unset;
+    }
+
+    .badge-available {
+        color: #198754;
+        font-weight: 600;
+    }
+
+    .badge-expired {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .badge-upcoming {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+
+    .text-body-secondary {
+        color: #6c757d !important;
+    }
+
+    .actor-img {
+        max-width: 120px;
+        border-radius: 0.4rem;
+        border: 2px solid #0dcaf0;
+        object-fit: cover;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-add-cart.disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-header">
+                    @Model.Name
+                </div>
+
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="@Model.ImageURL" alt="@Model.Name" class="card-img-full" />
+                    </div>
+
+                    <div class="col-md-8 p-4">
+                        <p class="text-body-secondary mb-4" style="text-align: justify; line-height: 1.6;">
+                            @Model.Description
+                        </p>
+
+                        <div class="row small text-body-secondary lh-sm mb-3">
+                            <div class="col-6 mb-2">
+                                <i class="bi bi-film me-1 text-info"></i>
+                                <strong>Cinema:</strong>
+                                <a asp-controller="Cinemas" asp-action="Details" asp-route-id="@Model.CinemaId" class="text-decoration-none">
+                                    @Model.Cinema.Name
+                                </a>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <i class="bi bi-person-badge me-1 text-primary"></i>
+                                <strong>Producer:</strong>
+                                <a asp-controller="Producers" asp-action="Details" asp-route-id="@Model.ProducerId" class="text-decoration-none">
+                                    @Model.Producer.FullName
+                                </a>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <i class="bi bi-tags me-1 text-warning"></i>
+                                <strong>Category:</strong> @Model.MovieCategory
+                            </div>
+                            <div class="col-6 mb-2">
+                                <i class="bi bi-calendar-event me-1 text-success"></i>
+                                <strong>Start:</strong> @Model.StartDate.ToString("dd MMM yyyy")
+                            </div>
+                            <div class="col-6 mb-2">
+                                <i class="bi bi-calendar-check me-1 text-danger"></i>
+                                <strong>End:</strong> @Model.EndDate.ToString("dd MMM yyyy")
+                            </div>
+                            <div class="col-6 mb-2">
+                                <i class="bi bi-info-circle me-1 text-secondary"></i>
+                                <strong>Status:</strong>
+                                @{
+                                    var now = DateTime.Now;
+                                    if (now >= Model.StartDate && now <= Model.EndDate)
+                                    {
+                                        <span class="badge text-success"><i class="bi bi-check-circle-fill me-1"></i>Available</span>
+                                        ;
+                                    }
+                                    else if (now > Model.EndDate)
+                                    {
+                                        <span class="badge text-danger"><i class="bi bi-x-circle-fill me-1"></i>Expired</span>
+                                        ;
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-primary"><i class="bi bi-clock-fill me-1"></i>Upcoming</span>
+                                        ;
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <strong>Actors:</strong>
+                        <div class="row mt-3">
+                            @foreach (var actor in Model.Actors_Movies)
+                            {
+                                <div class="col-6 col-md-3 text-center mb-4">
+                                    <img src="@actor.Actor.ProfilePictureURL" alt="@actor.Actor.FullName" class="actor-img" />
+                                    <br />
+                                    <a asp-controller="Actors" asp-action="Details" asp-route-id="@actor.ActorId" class="text-decoration-none fw-semibold">
+                                        @actor.Actor.FullName
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent d-flex justify-content-between align-items-center py-3">
+                    <a class="btn btn-outline-primary" asp-action="Index">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                    <a class="btn btn-success btn-add-cart text-white @((DateTime.Now > Model.EndDate) ? "disabled" : "")"
+                       asp-controller="Orders"
+                       asp-action="AddItemToShoppingCart"
+                       asp-route-id="@Model.Id">
+                        <i class="bi bi-cart-plus"></i> Add to Cart (@Model.Price.ToString("c"))
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

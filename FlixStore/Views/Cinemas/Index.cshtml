@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Cinema>
+
+@{
+    ViewData["Title"] = "List of Cinemas";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .text-dark-emphasis {
+        color: #222;
+    }
+
+    .cinema-img {
+        width: 130px;
+        height: 130px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .cinema-card {
+        transition: transform 0.2s ease;
+    }
+
+        .cinema-card:hover {
+            transform: translateY(-4px);
+        }
+
+    .card-footer a {
+        margin-right: 0.4rem;
+    }
+
+    .description-text {
+        text-align: justify;
+        text-align-last: center;
+        line-height: 1.6;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+
+    .modern-icon {
+        font-size: 1.1rem;
+        vertical-align: middle;
+        margin-right: 4px;
+    }
+</style>
+
+<div class="row g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm h-100 cinema-card">
+                <div class="card-body text-center">
+                    <img src="@item.Logo" alt="@item.Name" class="cinema-img mb-3" />
+
+                    <h5 class="fw-semibold text-dark-emphasis mb-2">@item.Name</h5>
+                    <p class="text-body-secondary description-text mb-3">
+                        @item.Description
+                    </p>
+                </div>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <div class="card-footer bg-transparent border-0 text-center pb-4">
+                        <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@item.Id">
+                            <i class="modern-icon bi bi-pencil"></i>Edit
+                        </a>
+                        <a class="btn btn-outline-info btn-sm" asp-action="Details" asp-route-id="@item.Id">
+                            <i class="modern-icon bi bi-eye"></i>Details
+                        </a>
+                        <a class="btn btn-danger btn-sm text-white" asp-action="Delete" asp-route-id="@item.Id">
+                            <i class="modern-icon bi bi-trash3"></i>Delete
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@await Html.PartialAsync("_CreateItem", "Cinemas")

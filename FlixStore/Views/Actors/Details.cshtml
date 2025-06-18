@@ -1,0 +1,121 @@
+﻿@model Actor
+
+@{
+    ViewData["Title"] = "Actor Details";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    input.form-control,
+    textarea.form-control {
+        border-radius: 0.3rem;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+        input.form-control[readonly],
+        textarea.form-control[readonly] {
+            cursor: default;
+        }
+
+    .img-preview {
+        max-height: 250px;
+        border-radius: 0.3rem;
+        box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 0.35rem;
+        padding: 0.5rem 1.25rem;
+    }
+
+    h2 {
+        font-weight: 700;
+    }
+
+    .text-primary {
+        color: #0d6efd !important;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .text-danger {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <h2 class="text-center mb-4 text-primary">🎭 Details for @Model.FullName</h2>
+            <p class="text-center text-muted mb-5 fs-5">
+                Here you can view all the details related to this actor.
+            </p>
+
+            <form>
+                <div class="row gx-4 gy-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" readonly />
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Bio" class="form-label"></label>
+                            <textarea asp-for="Bio" class="form-control" rows="5" readonly></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ProfilePictureURL" class="form-label"></label>
+                            <input asp-for="ProfilePictureURL" class="form-control" id="ProfilePictureURL" readonly />
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <img id="ProfilePicturePreview" src="@(!string.IsNullOrEmpty(Model.ProfilePictureURL) ? Model.ProfilePictureURL : "https://via.placeholder.com/400x250?text=No+Image")" alt="Image preview" class="img-preview" />
+                        </div>
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-between mt-4">
+                        <a class="btn btn-outline-secondary" asp-action="Index">← Show all</a>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const preview = document.getElementById('ProfilePicturePreview');
+            preview.src = $("#ProfilePictureURL").val() || 'https://via.placeholder.com/400x250?text=No+Image';
+        });
+    </script>
+}
