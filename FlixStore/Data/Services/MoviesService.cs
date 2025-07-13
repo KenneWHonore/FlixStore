@@ -1,5 +1,6 @@
 ﻿using FlixStore.Data.Base;
 using FlixStore.Data.ViewModels;
+using FlixStore.Migrations;
 using FlixStore.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ namespace FlixStore.Data.Services
                 Description = data.Description,
                 Price = data.Price,
                 ImageURL = data.ImageURL,
+                VideoURL = data.VideoURL,
                 CinemaId = data.CinemaId,
                 StartDate = data.StartDate,
                 EndDate = data.EndDate,
@@ -80,6 +82,7 @@ namespace FlixStore.Data.Services
                 dbMovie.Description = data.Description;
                 dbMovie.Price = data.Price;
                 dbMovie.ImageURL = data.ImageURL;
+                dbMovie.VideoURL = data.VideoURL;
                 dbMovie.CinemaId = data.CinemaId;
                 dbMovie.StartDate = data.StartDate;
                 dbMovie.EndDate = data.EndDate;

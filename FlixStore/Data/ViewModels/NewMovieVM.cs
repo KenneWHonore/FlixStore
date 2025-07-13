@@ -25,6 +25,10 @@ namespace FlixStore.Models
         [Required(ErrorMessage = "Movie poster URL is required")]
         public string ImageURL { get; set; }
 
+        [Display(Name = "Movie URL")]
+        [Required(ErrorMessage = "Movie URL is required")]
+        public string VideoURL { get; set; }
+
         [Display(Name = "Movie start date")]
         [Required(ErrorMessage = "Start date is required")]
         public DateTime StartDate { get; set; }

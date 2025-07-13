@@ -89,6 +89,7 @@ namespace FlixStore.Controllers
                 StartDate = movieDetails.StartDate,
                 EndDate = movieDetails.EndDate,
                 ImageURL = movieDetails.ImageURL,
+                VideoURL = movieDetails.VideoURL,
                 MovieCategory = movieDetails.MovieCategory,
                 CinemaId = movieDetails.CinemaId,
                 ProducerId = movieDetails.ProducerId,

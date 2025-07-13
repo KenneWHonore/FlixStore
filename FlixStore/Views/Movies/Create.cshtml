@@ -120,6 +120,11 @@
                         <div class="text-center mb-3">
                             <img id="ImageUrlPreview" src="https://via.placeholder.com/400x250?text=No+Image" alt="Image preview" class="img-preview" />
                         </div>
+                        <div class="form-group">
+                            <label asp-for="VideoURL" class="form-label"></label>
+                            <input asp-for="VideoURL" class="form-control" placeholder="Video URL" />
+                            <span asp-validation-for="VideoURL" class="text-danger"></span>
+                        </div>
                     </div>
 
                     <div class="col-md-6">

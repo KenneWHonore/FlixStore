@@ -24,6 +24,8 @@ namespace FlixStore.Models
 
         public MovieCategory MovieCategory { get; set; }
 
+        public string VideoURL { get; set; }
+
         public List<Actor_Movie> Actors_Movies { get; set; }
 
         public int CinemaId { get; set; }
