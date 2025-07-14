@@ -29,8 +29,9 @@
 
     h4 {
         font-weight: 700;
-        color: #222;
+        color: #198754; /* Texte en vert */
         margin-bottom: 6px;
+        text-align: center;
     }
 
     .subtext {
@@ -38,6 +39,7 @@
         font-size: 0.9rem;
         color: #555;
         margin-bottom: 28px;
+        text-align: center;
     }
 
     label {
@@ -54,6 +56,8 @@
         padding: 0 14px;
         font-size: 1rem;
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
     }
 
         input.form-control::placeholder {
@@ -68,39 +72,24 @@
             outline: none;
         }
 
+    /* Bouton Sign Up stylisé avec bordure verte */
     .btn-register {
         width: 100%;
-        background-color: #198754;
-        border: none;
+        background-color: transparent;
+        border: 2px solid #198754;
         padding: 12px 0;
         font-size: 1.1rem;
         font-weight: 700;
-        color: white;
+        color: #198754;
         border-radius: 8px;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, color 0.3s ease;
         margin-top: 18px;
     }
 
         .btn-register:hover {
-            background-color: #146c43;
-        }
-
-    .cancel-link {
-        display: block;
-        text-align: center;
-        margin-top: 14px;
-        color: #0d6efd;
-        font-weight: 600;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.95rem;
-        transition: color 0.25s ease;
-    }
-
-        .cancel-link:hover {
-            color: #084298;
-            text-decoration: underline;
+            background-color: #198754;
+            color: white;
         }
 
     .alert-danger {
@@ -116,7 +105,7 @@
 </style>
 
 <div class="register-card">
-    <h4 style="text-align: center;">Sign up for a new account</h4>
+    <h4>Sign up for a new account</h4>
     <p class="subtext">Create your account to access all the amazing features of FlixStore.</p>
 
     @if (TempData["Error"] != null)
@@ -163,6 +152,6 @@
 
         <button type="submit" class="btn-register">Sign up</button>
 
-        <a asp-controller="Movies" asp-action="Index" class="cancel-link">Cancel</a>
+        @* Bouton Cancel retiré *@
     </form>
 </div>

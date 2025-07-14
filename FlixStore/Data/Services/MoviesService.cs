@@ -71,6 +71,15 @@ namespace FlixStore.Data.Services
 
             return response;
         }
+        public async Task<List<Movie>> GetSuggestionsAsync(string search)
+        {
+            var movies = await GetAllAsync(n => n.Cinema);
+
+            return movies
+                .Where(m => m.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
 
         public async Task UpdateMovieAsync(NewMovieVM data)
         {

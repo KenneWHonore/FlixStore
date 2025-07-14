@@ -38,6 +38,7 @@ namespace FlixStore.Controllers
             return View("Index", allMovies);
         }
 
+
         //GET: Movies/Details
         [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
@@ -123,6 +124,8 @@ namespace FlixStore.Controllers
             await _service.UpdateMovieAsync(movie);
             return RedirectToAction(nameof(Index));
         }
+
+      
 
 
 
